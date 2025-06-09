@@ -3,25 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESP32 Web Flasher</title>
+    <title>M5Stack Web Flasher</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://unpkg.com/@espressif/esptool-js@latest/dist/web/install.js"></script>
+    <!-- Load ESP Web Tools -->
+    <script type="module">
+      (async () => {
+        try {
+          const espWebToolsModule = await import('https://unpkg.com/esp-web-tools@9.4.3/dist/web/install-button.js?module');
+          console.log('SUCCESS: ESP Web Tools module imported via https://unpkg.com/esp-web-tools@9.4.3/dist/web/install-button.js?module');
+          // console.log('Imported module structure:', espWebToolsModule); // Optional: for debugging module contents
+
+          // After import, check if the custom element is defined
+          if (customElements.get('esp-web-install-button')) {
+            console.log('CONFIRMED: <esp-web-install-button> custom element is defined and ready.');
+          } else {
+            console.error('ERROR: <esp-web-install-button> custom element is NOT defined even after module import. The module might not have registered it correctly.');
+          }
+        } catch (error) {
+          console.error('FAILURE: Could not import the ESP Web Tools module. Check URL, network, or ad-blockers. Details:', error);
+        }
+      })();
+    </script>
 </head>
 <body>
     <div class="container">
-        <h1>ESP32 Web Flasher</h1>
-        <div class="form-group">
-            <label for="firmwareUrl">Firmware URL (GitHub raw URL):</label>
-            <input type="text" id="firmwareUrl" 
-                   placeholder="https://github.com/username/repo/raw/main/firmware.bin"
-                   value="https://github.com/espressif/arduino-esp32/raw/master/tools/partitions/boot_app0.bin">
+        <h1>M5Stack Web Flasher</h1>
+        <div class="device-info">
+            <p>This tool helps you flash firmware to your M5Stack Core2/CoreS3 device.</p>
+            <div class="instructions">
+                <h3>Instructions:</h3>
+                <ol>
+                    <li>Connect your M5Stack to your computer via USB</li>
+                    <li>Click "Connect to M5Stack" and select your device</li>
+                    <li>Enter the firmware URL or use the default one</li>
+                    <li>Click "Flash Firmware" to start the process</li>
+                </ol>
+                <p class="note">Note: If connection fails, press and hold the reset button on your M5Stack for 1 second and try again.</p>
+            </div>
         </div>
         <div class="form-group">
-            <button id="connectBtn" class="btn">Connect to ESP32</button>
+            <label for="firmwareUrl">Firmware URL (GitHub raw URL or direct link):</label>
+            <input type="text" id="firmwareUrl" 
+                   placeholder="https://github.com/username/repo/raw/main/firmware.bin"
+                   value="https://github.com/m5stack/M5Core2/raw/master/examples/Advanced/FactoryTest/Core2_FactoryTest/Core2_FactoryTest.ino.esp32s3.bin">
+        </div>
+        <div class="form-group button-group">
+            <button id="connectBtn" class="btn">Connect to M5Stack</button>
             <button id="flashBtn" class="btn" disabled>Flash Firmware</button>
         </div>
         <div id="log" class="log-container"></div>
+        
+        <!-- ESP Web Tools Install Button (hidden, we'll use it programmatically) -->
+        <esp-web-install-button id="installButton" manifest="" style="display: none;"></esp-web-install-button>
     </div>
-    <script src="app.js"></script>
+    <script src="app.js" defer></script>
 </body>
 </html>
