@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 Web Flasher</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/@espressif/esptool-js@latest/dist/web/install.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>ESP32 Web Flasher</h1>
+        <div class="form-group">
+            <label for="firmwareUrl">Firmware URL (GitHub raw URL):</label>
+            <input type="text" id="firmwareUrl" 
+                   placeholder="https://github.com/username/repo/raw/main/firmware.bin"
+                   value="https://github.com/espressif/arduino-esp32/raw/master/tools/partitions/boot_app0.bin">
+        </div>
+        <div class="form-group">
+            <button id="connectBtn" class="btn">Connect to ESP32</button>
+            <button id="flashBtn" class="btn" disabled>Flash Firmware</button>
+        </div>
+        <div id="log" class="log-container"></div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
