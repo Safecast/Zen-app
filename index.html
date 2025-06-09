@@ -1,61 +1,109 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M5Stack Web Flasher</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- Load ESP Web Tools -->
-    <script type="module">
-      (async () => {
-        try {
-          const espWebToolsModule = await import('https://unpkg.com/esp-web-tools@9.4.3/dist/web/install-button.js?module');
-          console.log('SUCCESS: ESP Web Tools module imported via https://unpkg.com/esp-web-tools@9.4.3/dist/web/install-button.js?module');
-          // console.log('Imported module structure:', espWebToolsModule); // Optional: for debugging module contents
+<!DOCTYPE html><html><head><script type="importmap">{"imports":{"17fYX":"./stub_flasher_32.79928096.js","2pBtn":"./esp32s2.eb67e676.js","35K3k":"./stub_flasher_32c2.1e8a8f62.js","3OCVy":"./stub_flasher_32c61.7504b2fe.js","3qJU9":"./esp32c61.25d185bb.js","8itJW":"./esp32c6.9206e4d8.js","9N6hS":"./stub_flasher_32s2.d20e7f63.js","ELGPK":"./esp32c3.30f63481.js","at51o":"./esp32s3.67489660.js","cJDqv":"./stub_flasher_32c6.23eadd95.js","cXe3K":"./esp8266.ff379730.js","d4LkX":"./stub_flasher_32c5.b521988f.js","dJVWW":"./esp32h2.5b3f9c3f.js","eXP7h":"./stub_flasher_32h2.b5dc5012.js","fa8eB":"./stub_flasher_32p4.89455c1f.js","fk33s":"./esp32c5.1948091b.js","gbY4J":"./esp32.8ba027e5.js","gmXBg":"./stub_flasher_32s3.9db7ea72.js","hHpLC":"./stub_flasher_8266.1e9be1d2.js","i7djm":"./esp32p4.c3b47fed.js","jJvTY":"./esp32c2.f983e934.js","vZCF2":"./stub_flasher_32c3.90a30a3b.js"}}</script>
+        <meta charset="utf-8">
+        <title>ESP Tool</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@4.19.0/css/xterm.css">
+        <link href="https://fonts.googleapis.com/css?family=Orbitron" rel="stylesheet">
+        <link rel="icon" href="favicon.ee2246ac.ico">
+         <script src="https://cdn.jsdelivr.net/npm/xterm@4.19.0/lib/xterm.min.js"></script>
+         <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
+         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <h1 align="center"><p><img src="esp-logo.e558125a.png" width="42" height="42" style="vertical-align: middle" crossorigin=""> ESP Tool</p></h1>
+        <h4 align="center">A Serial Flasher utility for Espressif chips</h4>
+        <div id="safariErr" style="display: none"><p align="center" style="color: red">This tool is not supported on Safari browser!</p>
+        </div>
+        <div align="center">
+            <a class="btn btn-info" href="./docs/index.html">View the API Documentation</a>
 
-          // After import, check if the custom element is defined
-          if (customElements.get('esp-web-install-button')) {
-            console.log('CONFIRMED: <esp-web-install-button> custom element is defined and ready.');
-          } else {
-            console.error('ERROR: <esp-web-install-button> custom element is NOT defined even after module import. The module might not have registered it correctly.');
-          }
-        } catch (error) {
-          console.error('FAILURE: Could not import the ESP Web Tools module. Check URL, network, or ad-blockers. Details:', error);
-        }
-      })();
-    </script>
-</head>
-<body>
-    <div class="container">
-        <h1>M5Stack Web Flasher</h1>
-        <div class="device-info">
-            <p>This tool helps you flash firmware to your M5Stack Core2/CoreS3 device.</p>
-            <div class="instructions">
-                <h3>Instructions:</h3>
-                <ol>
-                    <li>Connect your M5Stack to your computer via USB</li>
-                    <li>Click "Connect to M5Stack" and select your device</li>
-                    <li>Enter the firmware URL or use the default one</li>
-                    <li>Click "Flash Firmware" to start the process</li>
-                </ol>
-                <p class="note">Note: If connection fails, press and hold the reset button on your M5Stack for 1 second and try again.</p>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="debugLogging" value="">
+                <label class="form-check-label" for="debugLogging">Show Debug log</label>
             </div>
+          </div>
+        <div class="container" id="main">
+            <hr>
+            <div id="program">
+                <h3> Program </h3>
+                <label for="baudrates" id="lblBaudrate">Baudrate:</label>
+                <label style="display: none" id="lblConnTo">Connected to device: </label>
+                <select name="baudrates" id="baudrates">
+                    <option value="921600">921600</option>
+                    <option value="460800">460800</option>
+                    <option value="230400">230400</option>
+                    <option value="115200">115200</option>
+                </select>
+
+                <br><br>
+
+                <input class="btn btn-info btn-sm" type="button" id="connectButton" value="Connect">
+                <input class="btn btn-info btn-sm" type="button" id="copyTraceButton" value="Copy Trace">
+                <input class="btn btn-warning btn-sm" type="button" id="disconnectButton" value="Disconnect">
+                <input class="btn btn-danger btn-sm" type="button" id="eraseButton" value="Erase Flash">
+                <br>
+
+                <!-- Firmware URL input -->
+                <div style="margin-top: 10px;">
+                    <label for="firmwareUrlInput">Firmware URL (e.g., from GitHub):</label>
+                    <input type="text" class="form-control" id="firmwareUrlInput" placeholder="https://example.com/firmware.bin">
+                    <button class="btn btn-primary btn-sm" id="fetchUrlButton" style="margin-top: 5px;">Fetch and Add Firmware</button>
+                </div>
+                <!-- End Firmware URL input -->
+
+                <div class="alert alert-danger alert-dismissible" id="alertDiv" style="margin-top: 10px; display: none">
+                    <a href="#" class="close" aria-label="close" onclick="$('.alert').hide()">×</a>
+                    <span id="alertmsg"></span>
+                </div>
+
+                <div id="files">
+                    <table class="table table-striped" id="fileTable">
+                        <thead class="thead-light">
+                            <tr>
+                                <th style="display: none;">Flash Address</th>
+                                <th>File</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                        </tbody>
+                    </table>
+                    <input class="btn btn-info btn-sm" type="button" id="addFile" value="Add File">
+                    <input class="btn btn-info btn-sm" type="button" id="programButton" value="Program">
+                </div>
+                <output id="list"></output>
+                <hr>
+            </div>
+            <div id="console">
+                <h3>Console </h3>
+                <label style="display: none" id="lblConsoleFor">Connected to device: </label>
+                <label for="consoleBaudrates" id="lblConsoleBaudrate">Baudrate:</label>
+                <select name="consoleBaudrates" id="consoleBaudrates">
+                    <option value="115200">115200</option>
+                    <option value="74880">74880</option>
+                </select>
+
+                <br><br>
+
+                <input class="btn btn-info" type="button" id="consoleStartButton" value="Start">
+                <input class="btn btn-info" type="button" id="consoleStopButton" value="Stop">
+                <input class="btn btn-info" type="button" id="resetButton" value="Reset">
+                <hr>
+            </div>
+            <div id="terminal"></div>
         </div>
-        <div class="form-group">
-            <label for="firmwareUrl">Firmware URL (GitHub raw URL or direct link):</label>
-            <input type="text" id="firmwareUrl" 
-                   placeholder="https://github.com/username/repo/raw/main/firmware.bin"
-                   value="https://github.com/m5stack/M5Core2/raw/master/examples/Advanced/FactoryTest/Core2_FactoryTest/Core2_FactoryTest.ino.esp32s3.bin">
-        </div>
-        <div class="form-group button-group">
-            <button id="connectBtn" class="btn">Connect to M5Stack</button>
-            <button id="flashBtn" class="btn" disabled>Flash Firmware</button>
-        </div>
-        <div id="log" class="log-container"></div>
-        
-        <!-- ESP Web Tools Install Button (hidden, we'll use it programmatically) -->
-        <esp-web-install-button id="installButton" manifest="" style="display: none;"></esp-web-install-button>
-    </div>
-    <script src="app.js" defer></script>
-</body>
-</html>
+        <script src="typescript.cd8600ab.js" type="module"></script>
+        <script>// Safari 3.0+ "[object HTMLElementConstructor]"
+var isSafari = /constructor/i.test(window.HTMLElement) || function(p) {
+    return p.toString() === "[object SafariRemoteNotification]";
+}(!window['safari'] || typeof safari !== 'undefined' && window['safari'].pushNotification);
+if (isSafari) {
+    document.getElementById("safariErr").style.display = "inline";
+    document.getElementById("main").style.display = "none";
+}
+
+</script>
+    
+
+</body></html>
