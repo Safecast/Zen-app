@@ -7725,7 +7725,7 @@ $382e02c9bbd5d50b$var$connectButton.onclick = async ()=>{
         $382e02c9bbd5d50b$var$connectButton.style.display = "none";
         $382e02c9bbd5d50b$var$disconnectButton.style.display = "initial";
         $382e02c9bbd5d50b$var$traceButton.style.display = "initial";
-        $382e02c9bbd5d50b$var$eraseButton.style.display = "initial";
+        $382e02c9bbd5d50b$var$eraseButton.style.display = "none";
         $382e02c9bbd5d50b$var$filesDiv.style.display = "initial";
         $382e02c9bbd5d50b$var$consoleDiv.style.display = "none";
     } catch (e) {
