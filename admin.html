@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firmware URL Configuration</title>
+    <!-- Optional: Link to Bootstrap CSS if you want styling consistent with index.html -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body { padding: 20px; }
+        .container { max-width: 600px; }
+        label { font-weight: bold; margin-top: 10px; }
+        input[type="url"] { width: 100%; margin-bottom: 10px; }
+        button { margin-top: 15px; }
+        #statusMessage { margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Firmware URL Configuration</h2>
+        
+        <div>
+            <label for="core2Url">M5StackCore2 (ESP32) Firmware URL:</label>
+            <input type="url" id="core2Url" class="form-control" placeholder="Enter URL for Core2 firmware">
+        </div>
+        
+        <div>
+            <label for="coreS3Url">M5StackCoreS3 (ESP32-S3) Firmware URL:</label>
+            <input type="url" id="coreS3Url" class="form-control" placeholder="Enter URL for CoreS3 firmware">
+        </div>
+        
+        <button id="saveButton" class="btn btn-primary">Save Settings</button>
+        <div id="statusMessage"></div>
+        
+        <hr style="margin-top: 30px; margin-bottom: 20px;">
+        <a href="index.html" class="btn btn-secondary">Back to Flasher</a>
+    </div>
+
+    <script>
+        const core2UrlInput = document.getElementById('core2Url');
+        const coreS3UrlInput = document.getElementById('coreS3Url');
+        const saveButton = document.getElementById('saveButton');
+        const statusMessage = document.getElementById('statusMessage');
+
+        const storageKeyCore2 = 'zenAppFirmwareUrlCore2';
+        const storageKeyCoreS3 = 'zenAppFirmwareUrlCoreS3';
+
+        // Load saved URLs on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedCore2Url = localStorage.getItem(storageKeyCore2);
+            if (savedCore2Url) {
+                core2UrlInput.value = savedCore2Url;
+            }
+            const savedCoreS3Url = localStorage.getItem(storageKeyCoreS3);
+            if (savedCoreS3Url) {
+                coreS3UrlInput.value = savedCoreS3Url;
+            }
+        });
+
+        // Save URLs to localStorage on button click
+        saveButton.addEventListener('click', () => {
+            const core2Url = core2UrlInput.value.trim();
+            const coreS3Url = coreS3UrlInput.value.trim();
+
+            localStorage.setItem(storageKeyCore2, core2Url);
+            localStorage.setItem(storageKeyCoreS3, coreS3Url);
+
+            statusMessage.textContent = 'Settings saved successfully!';
+            statusMessage.style.color = 'green';
+            setTimeout(() => {
+                statusMessage.textContent = '';
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

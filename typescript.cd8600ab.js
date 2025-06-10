@@ -7763,12 +7763,18 @@ $382e02c9bbd5d50b$var$connectButton.onclick = async ()=>{
         } else if ($382e02c9bbd5d50b$var$esploader.chip.CHIP_NAME === "ESP32-S3") {
             deviceDisplayName = "M5stackCoreS3";
         }
-        // Auto-populate firmware URL based on chip type
+        // Auto-populate firmware URL based on chip type, using localStorage if available
         if ($382e02c9bbd5d50b$var$firmwareUrlInput) {
+            const defaultCore2Url = "https://raw.githubusercontent.com/Safecast/bGeigieZen/Battery-logging-working/hardware/esp32fw%20core2.bin";
+            const defaultCoreS3Url = "https://raw.githubusercontent.com/Safecast/bGeigieZen/Battery-logging-working/hardware/esp32fw%20core3.bin";
+
+            const customCore2Url = localStorage.getItem('zenAppFirmwareUrlCore2');
+            const customCoreS3Url = localStorage.getItem('zenAppFirmwareUrlCoreS3');
+
             if ($382e02c9bbd5d50b$var$esploader.chip.CHIP_NAME === "ESP32") {
-                $382e02c9bbd5d50b$var$firmwareUrlInput.value = "https://raw.githubusercontent.com/Safecast/bGeigieZen/Battery-logging-working/hardware/esp32fw%20core2.bin";
+                $382e02c9bbd5d50b$var$firmwareUrlInput.value = (customCore2Url && customCore2Url.trim() !== '') ? customCore2Url : defaultCore2Url;
             } else if ($382e02c9bbd5d50b$var$esploader.chip.CHIP_NAME === "ESP32-S3") {
-                $382e02c9bbd5d50b$var$firmwareUrlInput.value = "https://raw.githubusercontent.com/Safecast/bGeigieZen/Battery-logging-working/hardware/esp32fw%20core3.bin";
+                $382e02c9bbd5d50b$var$firmwareUrlInput.value = (customCoreS3Url && customCoreS3Url.trim() !== '') ? customCoreS3Url : defaultCoreS3Url;
             } else {
                 $382e02c9bbd5d50b$var$firmwareUrlInput.value = ""; // Clear for other/unknown chip types
             }
