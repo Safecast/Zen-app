@@ -7555,6 +7555,8 @@ const $382e02c9bbd5d50b$var$programButton = document.getElementById("programButt
 // --- New code for URL fetching ---
 const $382e02c9bbd5d50b$var$fetchUrlButton = document.getElementById("fetchUrlButton");
 const $382e02c9bbd5d50b$var$firmwareUrlInput = document.getElementById("firmwareUrlInput");
+const $382e02c9bbd5d50b$var$spinnerContainer = document.getElementById("spinnerContainer");
+const $382e02c9bbd5d50b$var$lblStatus = document.getElementById("lblStatus");
 
 // Helper function to convert ArrayBuffer to binary string
 function $382e02c9bbd5d50b$var$arrayBufferToBinaryString(buffer) {
@@ -7636,6 +7638,7 @@ if ($382e02c9bbd5d50b$var$fetchUrlButton && $382e02c9bbd5d50b$var$firmwareUrlInp
                 $382e02c9bbd5d50b$var$removeRow(row);
             };
             cell4.appendChild(removeButton);
+            document.getElementById("firmwareUrlSection").style.display = "none";
             
         } catch (error) {
             console.error("Error fetching or adding firmware from URL:", error);
@@ -7664,6 +7667,7 @@ const $382e02c9bbd5d50b$var$term = new Terminal({
     rows: 40
 });
 $382e02c9bbd5d50b$var$term.open($382e02c9bbd5d50b$var$terminal);
+
 let $382e02c9bbd5d50b$var$device = null;
 let $382e02c9bbd5d50b$var$transport;
 let $382e02c9bbd5d50b$var$chip = null;
@@ -7723,8 +7727,8 @@ $382e02c9bbd5d50b$var$connectButton.onclick = async ()=>{
         $382e02c9bbd5d50b$var$lblConnTo.style.display = "block";
         $382e02c9bbd5d50b$var$baudrates.style.display = "none";
         $382e02c9bbd5d50b$var$connectButton.style.display = "none";
-        $382e02c9bbd5d50b$var$disconnectButton.style.display = "initial";
-        $382e02c9bbd5d50b$var$traceButton.style.display = "initial";
+        $382e02c9bbd5d50b$var$disconnectButton.style.display = "none";
+        $382e02c9bbd5d50b$var$traceButton.style.display = "none";
         $382e02c9bbd5d50b$var$eraseButton.style.display = "none";
         $382e02c9bbd5d50b$var$filesDiv.style.display = "initial";
         $382e02c9bbd5d50b$var$consoleDiv.style.display = "none";
@@ -7815,8 +7819,8 @@ $382e02c9bbd5d50b$var$addFileButton.onclick = ()=>{
 $382e02c9bbd5d50b$var$disconnectButton.onclick = async ()=>{
     if ($382e02c9bbd5d50b$var$transport) await $382e02c9bbd5d50b$var$transport.disconnect();
     $382e02c9bbd5d50b$var$term.reset();
-    $382e02c9bbd5d50b$var$lblBaudrate.style.display = "initial";
-    $382e02c9bbd5d50b$var$baudrates.style.display = "initial";
+    $382e02c9bbd5d50b$var$lblBaudrate.style.display = "none";
+    $382e02c9bbd5d50b$var$baudrates.style.display = "none";
     $382e02c9bbd5d50b$var$consoleBaudrates.style.display = "initial";
     $382e02c9bbd5d50b$var$connectButton.style.display = "initial";
     $382e02c9bbd5d50b$var$disconnectButton.style.display = "none";
@@ -7900,6 +7904,8 @@ $382e02c9bbd5d50b$var$consoleStopButton.onclick = async ()=>{
     return "success";
 }
 $382e02c9bbd5d50b$var$programButton.onclick = async ()=>{
+    let success = false;
+    if ($382e02c9bbd5d50b$var$programButton) $382e02c9bbd5d50b$var$programButton.style.display = "none";
     const alertMsg = document.getElementById("alertmsg");
     const err = $382e02c9bbd5d50b$var$validateProgramInputs();
     if (err != "success") {
@@ -7909,6 +7915,9 @@ $382e02c9bbd5d50b$var$programButton.onclick = async ()=>{
     }
     // Hide error message
     $382e02c9bbd5d50b$var$alertDiv.style.display = "none";
+    // Show spinner and set initial status
+    if ($382e02c9bbd5d50b$var$spinnerContainer) $382e02c9bbd5d50b$var$spinnerContainer.style.display = "block";
+    if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = "Preparing...";
     const fileArray = [];
     const progressBars = [];
     const processedRows = []; // Keep track of rows that are actually processed
@@ -7948,23 +7957,61 @@ $382e02c9bbd5d50b$var$programButton.onclick = async ()=>{
             eraseAll: false,
             compress: true,
             reportProgress: (fileIndex, written, total)=>{
+                // Original logic for hidden table progress bars
                 if (progressBars[fileIndex]) {
                     progressBars[fileIndex].value = written / total * 100;
+                }
+                // Update status label
+                // const percentage = (written / total) * 100; // Spinner doesn't show numeric progress
+                if ($382e02c9bbd5d50b$var$lblStatus) {
+                    if (written < total) {
+                        $382e02c9bbd5d50b$var$lblStatus.textContent = "Programming in progress...";
+                    } else { // written === total, programming hit 100%
+                        $382e02c9bbd5d50b$var$lblStatus.textContent = "Verifying data...";
+                    }
                 }
             },
             calculateMD5Hash: (image)=>CryptoJS.MD5(CryptoJS.enc.Latin1.parse(image))
         };
         await $382e02c9bbd5d50b$var$esploader.writeFlash(flashOptions);
+
+        // reportProgress should have set the label to "Verifying data..."
+        // Add a delay to ensure this message is visible before updating to "Verified"
+        await new Promise(resolve => setTimeout(resolve, 1000)); // 1-second delay
+
+        // Flashing and verification successful (implicit if writeFlash didn't throw)
+        if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = "Programming Verified. Resetting device...";
+
         await $382e02c9bbd5d50b$var$esploader.after();
+        success = true;
     } catch (e) {
         console.error(e);
         $382e02c9bbd5d50b$var$term.writeln(`Error: ${e.message}`);
+        if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = `Error: Programming failed`;
     } finally{
         // Hide progress bars and show erase buttons only for processed rows
         for (const row of processedRows) {
             if (row.cells[2]) row.cells[2].style.display = "none";
             if (row.cells[3]) row.cells[3].style.display = "initial";
         }
+        // Hide main progress bar after a delay
+        setTimeout(() => {
+            if (success) {
+                if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = "Programming successful!!";
+
+                setTimeout(() => { // Inner timeout to hide after "successful" message
+                    if ($382e02c9bbd5d50b$var$spinnerContainer) $382e02c9bbd5d50b$var$spinnerContainer.style.display = "none";
+                    if ($382e02c9bbd5d50b$var$programButton) $382e02c9bbd5d50b$var$programButton.style.display = "initial";
+                }, 2000); // Show "Programming successful!!" for 2 seconds
+            } else {
+                // Error occurred. The error message is already set in the catch block.
+                // Keep it visible for a bit longer, then hide.
+                setTimeout(() => { // Inner timeout to hide after error message
+                    if ($382e02c9bbd5d50b$var$spinnerContainer) $382e02c9bbd5d50b$var$spinnerContainer.style.display = "none";
+                    if ($382e02c9bbd5d50b$var$programButton) $382e02c9bbd5d50b$var$programButton.style.display = "initial";
+                }, 2000); // Error message was visible for 2s (outer timeout), show for additional 2s.
+            }
+        }, 2000); // Outer timeout: "Programming Verified. Resetting..." or "Error..." is shown for these 2s.
     }
 };
 $382e02c9bbd5d50b$var$addFileButton.onclick(undefined);
