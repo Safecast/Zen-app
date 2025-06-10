@@ -59,7 +59,7 @@
                 <input class="btn btn-warning btn-sm" type="button" id="disconnectButton" value="Disconnect" style="display: none;">
                 <input class="btn btn-danger btn-sm" type="button" id="eraseButton" value="Erase Flash" style="display: none;">
 
-                <div style="margin-top: 10px;" id="firmwareUrlSection">
+                <div style="margin-top: 10px; display: none;" id="firmwareUrlSection">
                     <label for="firmwareUrlInput">Firmware URL (e.g., from GitHub):</label>
                     <input type="text" class="form-control" id="firmwareUrlInput" placeholder="https://example.com/firmware.bin">
                     <button class="btn btn-primary btn-sm" id="fetchUrlButton" style="margin-top: 5px;">Fetch and Add Firmware</button>
@@ -84,14 +84,14 @@
                         </tbody>
                     </table>
                     <input class="btn btn-info btn-sm" type="button" id="addFile" value="Add File" style="display: none;">
-                    <input class="btn btn-info btn-sm" type="button" id="programButton" value="Program" style="margin-top: 10px;" disabled>
+                    <input class="btn btn-info btn-sm" type="button" id="programButton" value="Program" style="margin-top: 10px; display: none;" disabled>
                 </div>
                 <output id="list"></output>
 
                 <!-- Spinner Start -->
                 <div id="spinnerContainer" style="display: none; margin-top: 15px; margin-bottom: 15px; align-items: center; justify-content: flex-start; width: 100%;">
                     <div class="spinner"></div>
-                    <label id="lblStatus" style="margin-left: 10px; font-weight: bold;"></label>
+                    <label id="lblStatus" style="font-weight: bold;"></label>
                 </div>
                 <!-- Spinner End -->         </div>
             <div id="console">

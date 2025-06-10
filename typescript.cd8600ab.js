@@ -7555,6 +7555,7 @@ const $382e02c9bbd5d50b$var$programButton = document.getElementById("programButt
 // --- New code for URL fetching ---
 const $382e02c9bbd5d50b$var$fetchUrlButton = document.getElementById("fetchUrlButton");
 const $382e02c9bbd5d50b$var$firmwareUrlInput = document.getElementById("firmwareUrlInput");
+const $382e02c9bbd5d50b$var$firmwareUrlSection = document.getElementById("firmwareUrlSection");
 const $382e02c9bbd5d50b$var$spinnerContainer = document.getElementById("spinnerContainer");
 const $382e02c9bbd5d50b$var$lblStatus = document.getElementById("lblStatus");
 
@@ -7579,7 +7580,10 @@ if ($382e02c9bbd5d50b$var$fetchUrlButton && $382e02c9bbd5d50b$var$firmwareUrlInp
         const url = $382e02c9bbd5d50b$var$firmwareUrlInput.value;
         if (!url) {
             if ($382e02c9bbd5d50b$var$spinnerContainer) $382e02c9bbd5d50b$var$spinnerContainer.style.display = "flex";
-            if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = "Error: Please enter a firmware URL.";
+            if ($382e02c9bbd5d50b$var$lblStatus) {
+                $382e02c9bbd5d50b$var$lblStatus.textContent = "Error: Please enter a firmware URL.";
+                $382e02c9bbd5d50b$var$lblStatus.style.marginLeft = "0px";
+            }
             const spinnerElement = $382e02c9bbd5d50b$var$spinnerContainer ? $382e02c9bbd5d50b$var$spinnerContainer.querySelector('.spinner') : null;
             if (spinnerElement) spinnerElement.style.display = "none";
             return;
@@ -7587,7 +7591,10 @@ if ($382e02c9bbd5d50b$var$fetchUrlButton && $382e02c9bbd5d50b$var$firmwareUrlInp
 
         if (!url.startsWith("http://") && !url.startsWith("https://")) {
             if ($382e02c9bbd5d50b$var$spinnerContainer) $382e02c9bbd5d50b$var$spinnerContainer.style.display = "flex";
-            if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = "Error: Invalid URL. Must start with http:// or https://";
+            if ($382e02c9bbd5d50b$var$lblStatus) {
+                $382e02c9bbd5d50b$var$lblStatus.textContent = "Error: Invalid URL. Must start with http:// or https://";
+                $382e02c9bbd5d50b$var$lblStatus.style.marginLeft = "0px";
+            }
             const spinnerElement = $382e02c9bbd5d50b$var$spinnerContainer ? $382e02c9bbd5d50b$var$spinnerContainer.querySelector('.spinner') : null;
             if (spinnerElement) spinnerElement.style.display = "none";
             return;
@@ -7651,12 +7658,25 @@ if ($382e02c9bbd5d50b$var$fetchUrlButton && $382e02c9bbd5d50b$var$firmwareUrlInp
             cell4.appendChild(removeButton);
             document.getElementById("firmwareUrlSection").style.display = "none";
             
+            // Enable program button on successful fetch
+            if ($382e02c9bbd5d50b$var$programButton) $382e02c9bbd5d50b$var$programButton.disabled = false;
+
+            // Clear any previous success/error message from fetch
+            if ($382e02c9bbd5d50b$var$lblStatus && $382e02c9bbd5d50b$var$lblStatus.textContent.startsWith("Error:")) {
+                $382e02c9bbd5d50b$var$lblStatus.textContent = "";
+                if ($382e02c9bbd5d50b$var$spinnerContainer) $382e02c9bbd5d50b$var$spinnerContainer.style.display = "none";
+            }
+
         } catch (error) {
             console.error("Error fetching or adding firmware from URL:", error);
             if ($382e02c9bbd5d50b$var$spinnerContainer) $382e02c9bbd5d50b$var$spinnerContainer.style.display = "flex";
-            if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = 'Error fetching firmware: ' + error.message;
+            if ($382e02c9bbd5d50b$var$lblStatus) {
+                $382e02c9bbd5d50b$var$lblStatus.textContent = 'Error fetching firmware: ' + error.message;
+                $382e02c9bbd5d50b$var$lblStatus.style.marginLeft = "0px";
+            }
             const spinnerElement = $382e02c9bbd5d50b$var$spinnerContainer ? $382e02c9bbd5d50b$var$spinnerContainer.querySelector('.spinner') : null;
             if (spinnerElement) spinnerElement.style.display = "none";
+            if ($382e02c9bbd5d50b$var$programButton) $382e02c9bbd5d50b$var$programButton.disabled = true;
         } finally {
             $382e02c9bbd5d50b$var$fetchUrlButton.disabled = false;
             $382e02c9bbd5d50b$var$fetchUrlButton.textContent = "Fetch and Add Firmware";
@@ -7745,6 +7765,8 @@ $382e02c9bbd5d50b$var$connectButton.onclick = async ()=>{
         }
         $382e02c9bbd5d50b$var$lblConnTo.innerHTML = "Connected to device: " + deviceDisplayName;
         $382e02c9bbd5d50b$var$lblConnTo.style.display = "block";
+        if ($382e02c9bbd5d50b$var$firmwareUrlSection) $382e02c9bbd5d50b$var$firmwareUrlSection.style.display = "block";
+        if ($382e02c9bbd5d50b$var$programButton) $382e02c9bbd5d50b$var$programButton.style.display = "initial";
         $382e02c9bbd5d50b$var$baudrates.style.display = "none";
         $382e02c9bbd5d50b$var$connectButton.style.display = "none";
         $382e02c9bbd5d50b$var$disconnectButton.style.display = "none";
@@ -7752,6 +7774,7 @@ $382e02c9bbd5d50b$var$connectButton.onclick = async ()=>{
         $382e02c9bbd5d50b$var$eraseButton.style.display = "none";
         $382e02c9bbd5d50b$var$filesDiv.style.display = "initial";
         $382e02c9bbd5d50b$var$consoleDiv.style.display = "none";
+        if ($382e02c9bbd5d50b$var$programButton) $382e02c9bbd5d50b$var$programButton.disabled = true;
     } catch (e) {
         console.error(e);
         $382e02c9bbd5d50b$var$term.writeln(`Error: ${e.message}`);
@@ -7828,6 +7851,17 @@ $382e02c9bbd5d50b$var$addFileButton.onclick = ()=>{
  */ function $382e02c9bbd5d50b$var$removeRow(row) {
     const rowIndex = Array.from($382e02c9bbd5d50b$var$table.rows).indexOf(row);
     $382e02c9bbd5d50b$var$table.deleteRow(rowIndex);
+    if ($382e02c9bbd5d50b$var$programButton) {
+        if ($382e02c9bbd5d50b$var$table.rows.length <= 1) { // Only header row left
+            $382e02c9bbd5d50b$var$programButton.disabled = true;
+            // If the firmware URL section was hidden, and now no files are present, show it again.
+            if ($382e02c9bbd5d50b$var$firmwareUrlSection && $382e02c9bbd5d50b$var$firmwareUrlSection.style.display === "none") {
+                $382e02c9bbd5d50b$var$firmwareUrlSection.style.display = "block"; 
+            }
+        } else {
+            $382e02c9bbd5d50b$var$programButton.disabled = false; // Other files still exist
+        }
+    }
 }
 /**
  * Clean devices variables on chip disconnect. Remove stale references if any.
@@ -7835,6 +7869,7 @@ $382e02c9bbd5d50b$var$addFileButton.onclick = ()=>{
     $382e02c9bbd5d50b$var$device = null;
     $382e02c9bbd5d50b$var$transport = null;
     $382e02c9bbd5d50b$var$chip = null;
+    if ($382e02c9bbd5d50b$var$programButton) $382e02c9bbd5d50b$var$programButton.disabled = true;
 }
 $382e02c9bbd5d50b$var$disconnectButton.onclick = async ()=>{
     if ($382e02c9bbd5d50b$var$transport) await $382e02c9bbd5d50b$var$transport.disconnect();
@@ -7848,6 +7883,7 @@ $382e02c9bbd5d50b$var$disconnectButton.onclick = async ()=>{
     $382e02c9bbd5d50b$var$eraseButton.style.display = "none";
     $382e02c9bbd5d50b$var$lblConnTo.style.display = "none";
     $382e02c9bbd5d50b$var$filesDiv.style.display = "none";
+    if ($382e02c9bbd5d50b$var$firmwareUrlSection) $382e02c9bbd5d50b$var$firmwareUrlSection.style.display = "none";
     $382e02c9bbd5d50b$var$consoleDiv.style.display = "initial";
     $382e02c9bbd5d50b$var$cleanUp();
 };
@@ -7937,11 +7973,23 @@ $382e02c9bbd5d50b$var$programButton.onclick = async ()=>{
     const err = $382e02c9bbd5d50b$var$validateProgramInputs();
     if (err != "success") {
         if ($382e02c9bbd5d50b$var$spinnerContainer) $382e02c9bbd5d50b$var$spinnerContainer.style.display = "flex";
-        if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = "Error: " + err;
+        if ($382e02c9bbd5d50b$var$lblStatus) {
+            $382e02c9bbd5d50b$var$lblStatus.textContent = "Error: " + err;
+            $382e02c9bbd5d50b$var$lblStatus.style.marginLeft = "0px";
+        }
         const spinnerElement = $382e02c9bbd5d50b$var$spinnerContainer ? $382e02c9bbd5d50b$var$spinnerContainer.querySelector('.spinner') : null;
         if (spinnerElement) spinnerElement.style.display = "none";
         setTimeout(() => {
-            if ($382e02c9bbd5d50b$var$programButton) $382e02c9bbd5d50b$var$programButton.style.display = "initial";
+            if ($382e02c9bbd5d50b$var$programButton) {
+                $382e02c9bbd5d50b$var$programButton.style.display = "initial";
+                // Disable if the error is "No file selected" or if the table is effectively empty
+                if (err === "No file selected for programming!" || $382e02c9bbd5d50b$var$table.rows.length <= 1) {
+                    $382e02c9bbd5d50b$var$programButton.disabled = true;
+                } else {
+                    // For other validation errors (e.g. offset issue), if files are present, keep it enabled
+                    $382e02c9bbd5d50b$var$programButton.disabled = false;
+                }
+            }
         }, 2000);
         return;
     }
@@ -7951,7 +7999,10 @@ $382e02c9bbd5d50b$var$programButton.onclick = async ()=>{
         const spinnerElement = $382e02c9bbd5d50b$var$spinnerContainer.querySelector('.spinner');
         if (spinnerElement) spinnerElement.style.display = "block"; // Make spinner visible again
     }
-    if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = "Preparing...";
+    if ($382e02c9bbd5d50b$var$lblStatus) {
+        $382e02c9bbd5d50b$var$lblStatus.textContent = "Preparing...";
+        $382e02c9bbd5d50b$var$lblStatus.style.marginLeft = "10px";
+    }
     const fileArray = [];
     const progressBars = [];
     const processedRows = []; // Keep track of rows that are actually processed
@@ -7980,11 +8031,17 @@ $382e02c9bbd5d50b$var$programButton.onclick = async ()=>{
         // This case should ideally be caught by validateProgramInputs, 
         // but as a safeguard, if no files are to be flashed, just return.
         if ($382e02c9bbd5d50b$var$spinnerContainer) $382e02c9bbd5d50b$var$spinnerContainer.style.display = "flex";
-        if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = "Error: No files to program.";
+        if ($382e02c9bbd5d50b$var$lblStatus) {
+            $382e02c9bbd5d50b$var$lblStatus.textContent = "Error: No files to program.";
+            $382e02c9bbd5d50b$var$lblStatus.style.marginLeft = "0px";
+        }
         const spinnerElement = $382e02c9bbd5d50b$var$spinnerContainer ? $382e02c9bbd5d50b$var$spinnerContainer.querySelector('.spinner') : null;
         if (spinnerElement) spinnerElement.style.display = "none";
         setTimeout(() => {
-            if ($382e02c9bbd5d50b$var$programButton) $382e02c9bbd5d50b$var$programButton.style.display = "initial";
+            if ($382e02c9bbd5d50b$var$programButton) {
+                $382e02c9bbd5d50b$var$programButton.style.display = "initial";
+                $382e02c9bbd5d50b$var$programButton.disabled = true; // No files, so disable
+            }
         }, 2000);
         return;
     }
@@ -8005,8 +8062,10 @@ $382e02c9bbd5d50b$var$programButton.onclick = async ()=>{
                 if ($382e02c9bbd5d50b$var$lblStatus) {
                     if (written < total) {
                         $382e02c9bbd5d50b$var$lblStatus.textContent = "Programming in progress...";
+                        $382e02c9bbd5d50b$var$lblStatus.style.marginLeft = "10px";
                     } else { // written === total, programming hit 100%
                         $382e02c9bbd5d50b$var$lblStatus.textContent = "Verifying data...";
+                        $382e02c9bbd5d50b$var$lblStatus.style.marginLeft = "10px";
                     }
                 }
             },
@@ -8019,43 +8078,60 @@ $382e02c9bbd5d50b$var$programButton.onclick = async ()=>{
         await new Promise(resolve => setTimeout(resolve, 1000)); // 1-second delay
 
         // Flashing and verification successful (implicit if writeFlash didn't throw)
-        if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = "Programming Verified. Resetting device...";
+        if ($382e02c9bbd5d50b$var$lblStatus) {
+            $382e02c9bbd5d50b$var$lblStatus.textContent = "Programming Verified. Resetting device...";
+            $382e02c9bbd5d50b$var$lblStatus.style.marginLeft = "10px";
+        }
 
         await $382e02c9bbd5d50b$var$esploader.after();
         success = true;
     } catch (e) {
         console.error(e);
         $382e02c9bbd5d50b$var$term.writeln(`Error: ${e.message}`);
-        if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = `Error: Programming failed`;
-    } finally{
-        // Hide progress bars and show erase buttons only for processed rows
+        if ($382e02c9bbd5d50b$var$lblStatus) {
+            $382e02c9bbd5d50b$var$lblStatus.textContent = `Error: Programming failed`;
+            $382e02c9bbd5d50b$var$lblStatus.style.marginLeft = "0px";
+        }
+        const spinnerElement = $382e02c9bbd5d50b$var$spinnerContainer ? $382e02c9bbd5d50b$var$spinnerContainer.querySelector('.spinner') : null;
+        if (spinnerElement) spinnerElement.style.display = "none"; // Hide spinner animation on error
+    } finally {
+        // Hide progress bars and show erase buttons only for processed rows (part of old UI, kept for safety)
         for (const row of processedRows) {
             if (row.cells[2]) row.cells[2].style.display = "none";
-            if (row.cells[3]) row.cells[3].style.display = "initial";
+            if (row.cells[3]) row.cells[3].style.display = "initial"; 
         }
-        // Hide main progress bar after a delay
-        setTimeout(() => {
-            if (success) {
-                if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = "Programming successful!!";
 
-                // Hide the spinner element itself, but keep the container and label visible
-                if ($382e02c9bbd5d50b$var$spinnerContainer) {
-                    const spinnerElement = $382e02c9bbd5d50b$var$spinnerContainer.querySelector('.spinner');
-                    if (spinnerElement) spinnerElement.style.display = "none";
-                }
-
-                setTimeout(() => { // Inner timeout for program button
-                    if ($382e02c9bbd5d50b$var$programButton) $382e02c9bbd5d50b$var$programButton.style.display = "initial";
-                }, 2000); // Show "Programming successful!!" indefinitely, program button reappears after 2 seconds
-            } else {
-                // Error occurred. The error message is already set in the catch block.
-                // Keep it visible for a bit longer, then hide.
-                setTimeout(() => { // Inner timeout to hide after error message
-                    if ($382e02c9bbd5d50b$var$spinnerContainer) $382e02c9bbd5d50b$var$spinnerContainer.style.display = "none";
-                    if ($382e02c9bbd5d50b$var$programButton) $382e02c9bbd5d50b$var$programButton.style.display = "initial";
-                }, 2000); // Error message was visible for 2s (outer timeout), show for additional 2s.
+        if (success) {
+            if ($382e02c9bbd5d50b$var$lblStatus) {
+            $382e02c9bbd5d50b$var$lblStatus.textContent = "Programming successful!!";
+            $382e02c9bbd5d50b$var$lblStatus.style.marginLeft = "0px";
+        }
+            const spinnerElement = $382e02c9bbd5d50b$var$spinnerContainer ? $382e02c9bbd5d50b$var$spinnerContainer.querySelector('.spinner') : null;
+            if (spinnerElement) spinnerElement.style.display = "none"; // Stop spinner animation
+            
+            // Keep program button hidden and disabled on success
+            if ($382e02c9bbd5d50b$var$programButton) {
+                $382e02c9bbd5d50b$var$programButton.style.display = "none";
+                $382e02c9bbd5d50b$var$programButton.disabled = true;
             }
-        }, 2000); // Outer timeout: "Programming Verified. Resetting..." or "Error..." is shown for these 2s.
+        } else {
+            // If not successful (e.g., programming error from the try block)
+            // ensure button reappears after a delay.
+            // Note: Validation errors before the 'try' block already have their own setTimeout to show the button.
+            // This 'else' specifically handles failures *during* the 'try' block (e.g. esploader.writeFlash error)
+            // and ensures the button's state is correctly set.
+            setTimeout(() => {
+                if ($382e02c9bbd5d50b$var$programButton) {
+                    $382e02c9bbd5d50b$var$programButton.style.display = "initial";
+                    // Re-check if files are present to set disabled state correctly after a programming failure
+                    if ($382e02c9bbd5d50b$var$table.rows.length <= 1) { // No files loaded (only header)
+                        $382e02c9bbd5d50b$var$programButton.disabled = true;
+                    } else { // Files are still there, allow retry
+                        $382e02c9bbd5d50b$var$programButton.disabled = false;
+                    }
+                }
+            }, 2000);
+        }
     }
 };
 $382e02c9bbd5d50b$var$addFileButton.onclick(undefined);
