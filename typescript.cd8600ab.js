@@ -7763,6 +7763,16 @@ $382e02c9bbd5d50b$var$connectButton.onclick = async ()=>{
         } else if ($382e02c9bbd5d50b$var$esploader.chip.CHIP_NAME === "ESP32-S3") {
             deviceDisplayName = "M5stackCoreS3";
         }
+        // Auto-populate firmware URL based on chip type
+        if ($382e02c9bbd5d50b$var$firmwareUrlInput) {
+            if ($382e02c9bbd5d50b$var$esploader.chip.CHIP_NAME === "ESP32") {
+                $382e02c9bbd5d50b$var$firmwareUrlInput.value = "https://raw.githubusercontent.com/Safecast/bGeigieZen/Battery-logging-working/hardware/esp32fw%20core2.bin";
+            } else if ($382e02c9bbd5d50b$var$esploader.chip.CHIP_NAME === "ESP32-S3") {
+                $382e02c9bbd5d50b$var$firmwareUrlInput.value = "https://raw.githubusercontent.com/Safecast/bGeigieZen/Battery-logging-working/hardware/esp32fw%20core3.bin";
+            } else {
+                $382e02c9bbd5d50b$var$firmwareUrlInput.value = ""; // Clear for other/unknown chip types
+            }
+        }
         $382e02c9bbd5d50b$var$lblConnTo.innerHTML = "Connected to device: " + deviceDisplayName;
         $382e02c9bbd5d50b$var$lblConnTo.style.display = "block";
         if ($382e02c9bbd5d50b$var$firmwareUrlSection) $382e02c9bbd5d50b$var$firmwareUrlSection.style.display = "block";
