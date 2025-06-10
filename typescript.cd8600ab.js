@@ -7558,6 +7558,10 @@ const $382e02c9bbd5d50b$var$firmwareUrlInput = document.getElementById("firmware
 const $382e02c9bbd5d50b$var$firmwareUrlSection = document.getElementById("firmwareUrlSection");
 const $382e02c9bbd5d50b$var$spinnerContainer = document.getElementById("spinnerContainer");
 const $382e02c9bbd5d50b$var$lblStatus = document.getElementById("lblStatus");
+// --- New code for Stable/Beta toggle ---
+const $382e02c9bbd5d50b$var$firmwareTypeStableButton = document.getElementById("firmwareTypeStable");
+const $382e02c9bbd5d50b$var$firmwareTypeBetaButton = document.getElementById("firmwareTypeBeta");
+let $382e02c9bbd5d50b$var$currentFirmwareType = "stable"; // "stable" or "beta"
 
 // Helper function to convert ArrayBuffer to binary string
 function $382e02c9bbd5d50b$var$arrayBufferToBinaryString(buffer) {
@@ -7698,7 +7702,7 @@ const $382e02c9bbd5d50b$var$debugLogging = document.getElementById("debugLogging
 const $382e02c9bbd5d50b$var$serialLib = !navigator.serial && navigator.usb ? (0, $d2bbb828b377f05f$export$6c2c9a00e27c07e8) : navigator.serial;
 const $382e02c9bbd5d50b$var$term = new Terminal({
     cols: 120,
-    rows: 40
+    rows: 20
 });
 $382e02c9bbd5d50b$var$term.open($382e02c9bbd5d50b$var$terminal);
 
@@ -7739,6 +7743,73 @@ const $382e02c9bbd5d50b$var$espLoaderTerminal = {
         $382e02c9bbd5d50b$var$term.write(data);
     }
 };
+// --- Helper function to update firmware URL based on chip and toggle state ---
+function $382e02c9bbd5d50b$var$updateFirmwareUrlInput() {
+    if (!$382e02c9bbd5d50b$var$firmwareUrlInput) return;
+
+    if (!$382e02c9bbd5d50b$var$esploader || !$382e02c9bbd5d50b$var$esploader.chip) {
+        $382e02c9bbd5d50b$var$firmwareUrlInput.value = ""; // Clear if no chip info or not connected
+        return;
+    }
+
+    const chipName = $382e02c9bbd5d50b$var$esploader.chip.CHIP_NAME;
+    let urlToSet = "";
+
+    const defaultCore2Url = "https://raw.githubusercontent.com/Safecast/bGeigieZen/Battery-logging-working/hardware/esp32fw%20core2.bin";
+    const defaultCoreS3Url = "https://raw.githubusercontent.com/Safecast/bGeigieZen/Battery-logging-working/hardware/esp32fw%20core3.bin";
+
+    const customCore2StableUrl = localStorage.getItem('zenAppFirmwareUrlCore2');
+    const customCoreS3StableUrl = localStorage.getItem('zenAppFirmwareUrlCoreS3');
+    const customCore2BetaUrl = localStorage.getItem('zenAppFirmwareUrlCore2Beta');
+    const customCoreS3BetaUrl = localStorage.getItem('zenAppFirmwareUrlCoreS3Beta');
+
+    if (chipName === "ESP32") {
+        if ($382e02c9bbd5d50b$var$currentFirmwareType === "beta" && customCore2BetaUrl && customCore2BetaUrl.trim() !== '') {
+            urlToSet = customCore2BetaUrl;
+        } else if (customCore2StableUrl && customCore2StableUrl.trim() !== '') {
+            urlToSet = customCore2StableUrl;
+        } else {
+            urlToSet = defaultCore2Url;
+        }
+    } else if (chipName === "ESP32-S3") {
+        if ($382e02c9bbd5d50b$var$currentFirmwareType === "beta" && customCoreS3BetaUrl && customCoreS3BetaUrl.trim() !== '') {
+            urlToSet = customCoreS3BetaUrl;
+        } else if (customCoreS3StableUrl && customCoreS3StableUrl.trim() !== '') {
+            urlToSet = customCoreS3StableUrl;
+        } else {
+            urlToSet = defaultCoreS3Url;
+        }
+    } else {
+        urlToSet = ""; // Clear for other/unknown chip types
+    }
+    $382e02c9bbd5d50b$var$firmwareUrlInput.value = urlToSet;
+}
+
+// --- Event listeners for Stable/Beta toggle buttons ---
+if ($382e02c9bbd5d50b$var$firmwareTypeStableButton && $382e02c9bbd5d50b$var$firmwareTypeBetaButton) {
+    $382e02c9bbd5d50b$var$firmwareTypeStableButton.addEventListener('click', () => {
+        if ($382e02c9bbd5d50b$var$currentFirmwareType !== "stable") {
+            $382e02c9bbd5d50b$var$currentFirmwareType = "stable";
+            $382e02c9bbd5d50b$var$firmwareTypeStableButton.classList.add('active', 'btn-primary');
+            $382e02c9bbd5d50b$var$firmwareTypeStableButton.classList.remove('btn-default');
+            $382e02c9bbd5d50b$var$firmwareTypeBetaButton.classList.remove('active', 'btn-primary');
+            $382e02c9bbd5d50b$var$firmwareTypeBetaButton.classList.add('btn-default');
+            $382e02c9bbd5d50b$var$updateFirmwareUrlInput();
+        }
+    });
+
+    $382e02c9bbd5d50b$var$firmwareTypeBetaButton.addEventListener('click', () => {
+        if ($382e02c9bbd5d50b$var$currentFirmwareType !== "beta") {
+            $382e02c9bbd5d50b$var$currentFirmwareType = "beta";
+            $382e02c9bbd5d50b$var$firmwareTypeBetaButton.classList.add('active', 'btn-primary');
+            $382e02c9bbd5d50b$var$firmwareTypeBetaButton.classList.remove('btn-default');
+            $382e02c9bbd5d50b$var$firmwareTypeStableButton.classList.remove('active', 'btn-primary');
+            $382e02c9bbd5d50b$var$firmwareTypeStableButton.classList.add('btn-default');
+            $382e02c9bbd5d50b$var$updateFirmwareUrlInput();
+        }
+    });
+}
+
 $382e02c9bbd5d50b$var$connectButton.onclick = async ()=>{
     try {
         if ($382e02c9bbd5d50b$var$device === null) {
@@ -7763,22 +7834,8 @@ $382e02c9bbd5d50b$var$connectButton.onclick = async ()=>{
         } else if ($382e02c9bbd5d50b$var$esploader.chip.CHIP_NAME === "ESP32-S3") {
             deviceDisplayName = "M5stackCoreS3";
         }
-        // Auto-populate firmware URL based on chip type, using localStorage if available
-        if ($382e02c9bbd5d50b$var$firmwareUrlInput) {
-            const defaultCore2Url = "https://raw.githubusercontent.com/Safecast/bGeigieZen/Battery-logging-working/hardware/esp32fw%20core2.bin";
-            const defaultCoreS3Url = "https://raw.githubusercontent.com/Safecast/bGeigieZen/Battery-logging-working/hardware/esp32fw%20core3.bin";
-
-            const customCore2Url = localStorage.getItem('zenAppFirmwareUrlCore2');
-            const customCoreS3Url = localStorage.getItem('zenAppFirmwareUrlCoreS3');
-
-            if ($382e02c9bbd5d50b$var$esploader.chip.CHIP_NAME === "ESP32") {
-                $382e02c9bbd5d50b$var$firmwareUrlInput.value = (customCore2Url && customCore2Url.trim() !== '') ? customCore2Url : defaultCore2Url;
-            } else if ($382e02c9bbd5d50b$var$esploader.chip.CHIP_NAME === "ESP32-S3") {
-                $382e02c9bbd5d50b$var$firmwareUrlInput.value = (customCoreS3Url && customCoreS3Url.trim() !== '') ? customCoreS3Url : defaultCoreS3Url;
-            } else {
-                $382e02c9bbd5d50b$var$firmwareUrlInput.value = ""; // Clear for other/unknown chip types
-            }
-        }
+        // Auto-populate firmware URL based on chip type and Stable/Beta toggle
+        $382e02c9bbd5d50b$var$updateFirmwareUrlInput();
         $382e02c9bbd5d50b$var$lblConnTo.innerHTML = "Connected to device: " + deviceDisplayName;
         $382e02c9bbd5d50b$var$lblConnTo.style.display = "block";
         if ($382e02c9bbd5d50b$var$firmwareUrlSection) $382e02c9bbd5d50b$var$firmwareUrlSection.style.display = "block";
@@ -7900,6 +7957,15 @@ $382e02c9bbd5d50b$var$disconnectButton.onclick = async ()=>{
     $382e02c9bbd5d50b$var$lblConnTo.style.display = "none";
     $382e02c9bbd5d50b$var$filesDiv.style.display = "none";
     if ($382e02c9bbd5d50b$var$firmwareUrlSection) $382e02c9bbd5d50b$var$firmwareUrlSection.style.display = "none";
+    // Reset toggle to Stable on disconnect
+    if ($382e02c9bbd5d50b$var$firmwareTypeStableButton && $382e02c9bbd5d50b$var$firmwareTypeBetaButton) {
+        $382e02c9bbd5d50b$var$currentFirmwareType = "stable";
+        $382e02c9bbd5d50b$var$firmwareTypeStableButton.classList.add('active', 'btn-primary');
+        $382e02c9bbd5d50b$var$firmwareTypeStableButton.classList.remove('btn-default');
+        $382e02c9bbd5d50b$var$firmwareTypeBetaButton.classList.remove('active', 'btn-primary');
+        $382e02c9bbd5d50b$var$firmwareTypeBetaButton.classList.add('btn-default');
+    }
+    if ($382e02c9bbd5d50b$var$firmwareUrlInput) $382e02c9bbd5d50b$var$firmwareUrlInput.value = ""; // Ensure URL field is cleared
     $382e02c9bbd5d50b$var$consoleDiv.style.display = "initial";
     $382e02c9bbd5d50b$var$cleanUp();
 };

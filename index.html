@@ -54,12 +54,17 @@
                     <option value="115200">115200</option>
                 </select>
 
-                <input class="btn btn-info btn-sm" type="button" id="connectButton" value="Connect">
+                <input class="btn btn-primary btn-sm" type="button" id="connectButton" value="Connect">
                 <input class="btn btn-info btn-sm" type="button" id="copyTraceButton" value="Copy Trace" style="display: none;">
                 <input class="btn btn-warning btn-sm" type="button" id="disconnectButton" value="Disconnect" style="display: none;">
                 <input class="btn btn-danger btn-sm" type="button" id="eraseButton" value="Erase Flash" style="display: none;">
 
                 <div style="margin-top: 10px; display: none;" id="firmwareUrlSection">
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Firmware Type" style="margin-bottom: 10px;">
+                        <button type="button" class="btn btn-primary active" id="firmwareTypeStable">Stable</button>
+                        <button type="button" class="btn btn-default" id="firmwareTypeBeta">Beta</button>
+                    </div>
+                    <br/> <!-- Ensure label is on a new line -->
                     <label for="firmwareUrlInput">Firmware URL (e.g., from GitHub):</label>
                     <input type="text" class="form-control" id="firmwareUrlInput" placeholder="https://example.com/firmware.bin">
                     <button class="btn btn-primary btn-sm" id="fetchUrlButton" style="margin-top: 5px;">Fetch and Add Firmware</button>
@@ -84,7 +89,7 @@
                         </tbody>
                     </table>
                     <input class="btn btn-info btn-sm" type="button" id="addFile" value="Add File" style="display: none;">
-                    <input class="btn btn-info btn-sm" type="button" id="programButton" value="Program" style="margin-top: 10px; display: none;" disabled>
+                    <input class="btn btn-primary btn-sm" type="button" id="programButton" value="Program" style="margin-top: 10px; display: none;" disabled>
                 </div>
                 <output id="list"></output>
 
@@ -94,7 +99,7 @@
                     <label id="lblStatus" style="font-weight: bold;"></label>
                 </div>
                 <!-- Spinner End -->         </div>
-            <div id="console">
+            <div id="console" style="display: none;">
                 <h3>Console </h3>
                 <label style="display: none" id="lblConsoleFor">Connected to device: </label>
                 <label for="consoleBaudrates" id="lblConsoleBaudrate">Baudrate:</label>

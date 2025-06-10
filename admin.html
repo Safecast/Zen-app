@@ -21,13 +21,25 @@
         <h2>Firmware URL Configuration</h2>
         
         <div>
-            <label for="core2Url">M5StackCore2 (ESP32) Firmware URL:</label>
+            <label for="core2Url">M5StackCore2 (ESP32) Stable Firmware URL:</label>
             <input type="url" id="core2Url" class="form-control" placeholder="Enter URL for Core2 firmware">
         </div>
         
         <div>
-            <label for="coreS3Url">M5StackCoreS3 (ESP32-S3) Firmware URL:</label>
-            <input type="url" id="coreS3Url" class="form-control" placeholder="Enter URL for CoreS3 firmware">
+            <label for="coreS3Url">M5StackCoreS3 (ESP32-S3) Stable Firmware URL:</label>
+            <input type="url" id="coreS3Url" class="form-control" placeholder="Enter URL for CoreS3 Stable firmware">
+        </div>
+
+        <hr style="margin-top: 20px; margin-bottom: 20px;">
+
+        <div>
+            <label for="core2BetaUrl">M5StackCore2 (ESP32) Beta Firmware URL:</label>
+            <input type="url" id="core2BetaUrl" class="form-control" placeholder="Enter URL for Core2 Beta firmware">
+        </div>
+
+        <div>
+            <label for="coreS3BetaUrl">M5StackCoreS3 (ESP32-S3) Beta Firmware URL:</label>
+            <input type="url" id="coreS3BetaUrl" class="form-control" placeholder="Enter URL for CoreS3 Beta firmware">
         </div>
         
         <button id="saveButton" class="btn btn-primary">Save Settings</button>
@@ -40,11 +52,15 @@
     <script>
         const core2UrlInput = document.getElementById('core2Url');
         const coreS3UrlInput = document.getElementById('coreS3Url');
+        const core2BetaUrlInput = document.getElementById('core2BetaUrl');
+        const coreS3BetaUrlInput = document.getElementById('coreS3BetaUrl');
         const saveButton = document.getElementById('saveButton');
         const statusMessage = document.getElementById('statusMessage');
 
         const storageKeyCore2 = 'zenAppFirmwareUrlCore2';
         const storageKeyCoreS3 = 'zenAppFirmwareUrlCoreS3';
+        const storageKeyCore2Beta = 'zenAppFirmwareUrlCore2Beta';
+        const storageKeyCoreS3Beta = 'zenAppFirmwareUrlCoreS3Beta';
 
         // Load saved URLs on page load
         document.addEventListener('DOMContentLoaded', () => {
@@ -56,15 +72,27 @@
             if (savedCoreS3Url) {
                 coreS3UrlInput.value = savedCoreS3Url;
             }
+            const savedCore2BetaUrl = localStorage.getItem(storageKeyCore2Beta);
+            if (savedCore2BetaUrl) {
+                core2BetaUrlInput.value = savedCore2BetaUrl;
+            }
+            const savedCoreS3BetaUrl = localStorage.getItem(storageKeyCoreS3Beta);
+            if (savedCoreS3BetaUrl) {
+                coreS3BetaUrlInput.value = savedCoreS3BetaUrl;
+            }
         });
 
         // Save URLs to localStorage on button click
         saveButton.addEventListener('click', () => {
             const core2Url = core2UrlInput.value.trim();
             const coreS3Url = coreS3UrlInput.value.trim();
+            const core2BetaUrl = core2BetaUrlInput.value.trim();
+            const coreS3BetaUrl = coreS3BetaUrlInput.value.trim();
 
             localStorage.setItem(storageKeyCore2, core2Url);
             localStorage.setItem(storageKeyCoreS3, coreS3Url);
+            localStorage.setItem(storageKeyCore2Beta, core2BetaUrl);
+            localStorage.setItem(storageKeyCoreS3Beta, coreS3BetaUrl);
 
             statusMessage.textContent = 'Settings saved successfully!';
             statusMessage.style.color = 'green';
