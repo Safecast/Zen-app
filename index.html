@@ -28,7 +28,7 @@
     </head>
     <body>
         <div style="display: none;">
-            <h1 align="center"><p><img src="esp-logo.e558125a.png" width="42" height="42" style="vertical-align: middle" crossorigin=""> ESP Tool</p></h1>
+            <h1 align="center"><p><img src="esp-logo.e558125a.png" width="42" height="42" style="vertical-align: middle" crossorigin=""> bGeigieZen Programmer</p></h1>
             <h4 align="center">A Serial Flasher utility for Espressif chips</h4>
             <div id="safariErr" style="display: none"><p align="center" style="color: red">This tool is not supported on Safari browser!</p>
             </div>
@@ -44,7 +44,7 @@
         <div class="container" id="main">
             <hr>
             <div id="program">
-                <h3> Program </h3>
+                <h3><b>bGeigieZen Programmer</b></h3>
                 <label for="baudrates" id="lblBaudrate" style="display: none;">Baudrate:</label>
                 <label style="display: none" id="lblConnTo">Connected to device: </label>
                 <select name="baudrates" id="baudrates" style="display: none;">
@@ -54,15 +54,11 @@
                     <option value="115200">115200</option>
                 </select>
 
-                <br><br>
-
                 <input class="btn btn-info btn-sm" type="button" id="connectButton" value="Connect">
                 <input class="btn btn-info btn-sm" type="button" id="copyTraceButton" value="Copy Trace" style="display: none;">
                 <input class="btn btn-warning btn-sm" type="button" id="disconnectButton" value="Disconnect" style="display: none;">
                 <input class="btn btn-danger btn-sm" type="button" id="eraseButton" value="Erase Flash" style="display: none;">
-                <br>
 
-                <!-- Firmware URL input -->
                 <div style="margin-top: 10px;" id="firmwareUrlSection">
                     <label for="firmwareUrlInput">Firmware URL (e.g., from GitHub):</label>
                     <input type="text" class="form-control" id="firmwareUrlInput" placeholder="https://example.com/firmware.bin">
@@ -88,12 +84,12 @@
                         </tbody>
                     </table>
                     <input class="btn btn-info btn-sm" type="button" id="addFile" value="Add File" style="display: none;">
-                    <input class="btn btn-info btn-sm" type="button" id="programButton" value="Program">
+                    <input class="btn btn-info btn-sm" type="button" id="programButton" value="Program" style="margin-top: 10px;" disabled>
                 </div>
                 <output id="list"></output>
 
                 <!-- Spinner Start -->
-                <div id="spinnerContainer" style="display: none; margin-top: 15px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center;">
+                <div id="spinnerContainer" style="display: none; margin-top: 15px; margin-bottom: 15px; align-items: center; justify-content: flex-start; width: 100%;">
                     <div class="spinner"></div>
                     <label id="lblStatus" style="margin-left: 10px; font-weight: bold;"></label>
                 </div>

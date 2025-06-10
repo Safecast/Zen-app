@@ -7571,14 +7571,25 @@ function $382e02c9bbd5d50b$var$arrayBufferToBinaryString(buffer) {
 
 if ($382e02c9bbd5d50b$var$fetchUrlButton && $382e02c9bbd5d50b$var$firmwareUrlInput) {
     $382e02c9bbd5d50b$var$fetchUrlButton.onclick = async () => {
+        // Clear previous error messages from lblStatus if any from fetch
+        if ($382e02c9bbd5d50b$var$lblStatus && $382e02c9bbd5d50b$var$lblStatus.textContent.startsWith("Error:")) {
+            $382e02c9bbd5d50b$var$lblStatus.textContent = "";
+            if ($382e02c9bbd5d50b$var$spinnerContainer) $382e02c9bbd5d50b$var$spinnerContainer.style.display = "none";
+        }
         const url = $382e02c9bbd5d50b$var$firmwareUrlInput.value;
         if (!url) {
-            alert("Please enter a firmware URL.");
+            if ($382e02c9bbd5d50b$var$spinnerContainer) $382e02c9bbd5d50b$var$spinnerContainer.style.display = "flex";
+            if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = "Error: Please enter a firmware URL.";
+            const spinnerElement = $382e02c9bbd5d50b$var$spinnerContainer ? $382e02c9bbd5d50b$var$spinnerContainer.querySelector('.spinner') : null;
+            if (spinnerElement) spinnerElement.style.display = "none";
             return;
         }
 
         if (!url.startsWith("http://") && !url.startsWith("https://")) {
-            alert("Invalid URL. Must start with http:// or https://");
+            if ($382e02c9bbd5d50b$var$spinnerContainer) $382e02c9bbd5d50b$var$spinnerContainer.style.display = "flex";
+            if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = "Error: Invalid URL. Must start with http:// or https://";
+            const spinnerElement = $382e02c9bbd5d50b$var$spinnerContainer ? $382e02c9bbd5d50b$var$spinnerContainer.querySelector('.spinner') : null;
+            if (spinnerElement) spinnerElement.style.display = "none";
             return;
         }
         
@@ -7642,7 +7653,10 @@ if ($382e02c9bbd5d50b$var$fetchUrlButton && $382e02c9bbd5d50b$var$firmwareUrlInp
             
         } catch (error) {
             console.error("Error fetching or adding firmware from URL:", error);
-            alert('Error fetching firmware: ' + error.message);
+            if ($382e02c9bbd5d50b$var$spinnerContainer) $382e02c9bbd5d50b$var$spinnerContainer.style.display = "flex";
+            if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = 'Error fetching firmware: ' + error.message;
+            const spinnerElement = $382e02c9bbd5d50b$var$spinnerContainer ? $382e02c9bbd5d50b$var$spinnerContainer.querySelector('.spinner') : null;
+            if (spinnerElement) spinnerElement.style.display = "none";
         } finally {
             $382e02c9bbd5d50b$var$fetchUrlButton.disabled = false;
             $382e02c9bbd5d50b$var$fetchUrlButton.textContent = "Fetch and Add Firmware";
@@ -7659,7 +7673,7 @@ const $382e02c9bbd5d50b$var$lblConsoleBaudrate = document.getElementById("lblCon
 const $382e02c9bbd5d50b$var$lblConsoleFor = document.getElementById("lblConsoleFor");
 const $382e02c9bbd5d50b$var$lblConnTo = document.getElementById("lblConnTo");
 const $382e02c9bbd5d50b$var$table = document.getElementById("fileTable");
-const $382e02c9bbd5d50b$var$alertDiv = document.getElementById("alertDiv");
+
 const $382e02c9bbd5d50b$var$debugLogging = document.getElementById("debugLogging");
 const $382e02c9bbd5d50b$var$serialLib = !navigator.serial && navigator.usb ? (0, $d2bbb828b377f05f$export$6c2c9a00e27c07e8) : navigator.serial;
 const $382e02c9bbd5d50b$var$term = new Terminal({
@@ -7723,7 +7737,13 @@ $382e02c9bbd5d50b$var$connectButton.onclick = async ()=>{
         // await esploader.flashId();
         console.log("Settings done for :" + $382e02c9bbd5d50b$var$chip);
         $382e02c9bbd5d50b$var$lblBaudrate.style.display = "none";
-        $382e02c9bbd5d50b$var$lblConnTo.innerHTML = "Connected to device: " + $382e02c9bbd5d50b$var$chip;
+        let deviceDisplayName = $382e02c9bbd5d50b$var$chip; // Default to esploader.chip.DESCRIPTION (already stored in $382e02c9bbd5d50b$var$chip)
+        if ($382e02c9bbd5d50b$var$esploader.chip.CHIP_NAME === "ESP32") {
+            deviceDisplayName = "M5StackCore2";
+        } else if ($382e02c9bbd5d50b$var$esploader.chip.CHIP_NAME === "ESP32-S3") {
+            deviceDisplayName = "M5stackCoreS3";
+        }
+        $382e02c9bbd5d50b$var$lblConnTo.innerHTML = "Connected to device: " + deviceDisplayName;
         $382e02c9bbd5d50b$var$lblConnTo.style.display = "block";
         $382e02c9bbd5d50b$var$baudrates.style.display = "none";
         $382e02c9bbd5d50b$var$connectButton.style.display = "none";
@@ -7828,7 +7848,6 @@ $382e02c9bbd5d50b$var$disconnectButton.onclick = async ()=>{
     $382e02c9bbd5d50b$var$eraseButton.style.display = "none";
     $382e02c9bbd5d50b$var$lblConnTo.style.display = "none";
     $382e02c9bbd5d50b$var$filesDiv.style.display = "none";
-    $382e02c9bbd5d50b$var$alertDiv.style.display = "none";
     $382e02c9bbd5d50b$var$consoleDiv.style.display = "initial";
     $382e02c9bbd5d50b$var$cleanUp();
 };
@@ -7904,19 +7923,34 @@ $382e02c9bbd5d50b$var$consoleStopButton.onclick = async ()=>{
     return "success";
 }
 $382e02c9bbd5d50b$var$programButton.onclick = async ()=>{
+    // Clear previous error/success messages from lblStatus if any
+    if ($382e02c9bbd5d50b$var$lblStatus && ($382e02c9bbd5d50b$var$lblStatus.textContent.startsWith("Error:") || $382e02c9bbd5d50b$var$lblStatus.textContent === "Programming successful!!")) {
+        $382e02c9bbd5d50b$var$lblStatus.textContent = "";
+        if ($382e02c9bbd5d50b$var$spinnerContainer) {
+            $382e02c9bbd5d50b$var$spinnerContainer.style.display = "none"; // Hide container
+            const spinnerElement = $382e02c9bbd5d50b$var$spinnerContainer.querySelector('.spinner');
+            if (spinnerElement) spinnerElement.style.display = "block"; // Reset spinner to be visible when container is next shown for programming
+        }
+    }
     let success = false;
     if ($382e02c9bbd5d50b$var$programButton) $382e02c9bbd5d50b$var$programButton.style.display = "none";
-    const alertMsg = document.getElementById("alertmsg");
     const err = $382e02c9bbd5d50b$var$validateProgramInputs();
     if (err != "success") {
-        alertMsg.innerHTML = "<strong>" + err + "</strong>";
-        $382e02c9bbd5d50b$var$alertDiv.style.display = "block";
+        if ($382e02c9bbd5d50b$var$spinnerContainer) $382e02c9bbd5d50b$var$spinnerContainer.style.display = "flex";
+        if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = "Error: " + err;
+        const spinnerElement = $382e02c9bbd5d50b$var$spinnerContainer ? $382e02c9bbd5d50b$var$spinnerContainer.querySelector('.spinner') : null;
+        if (spinnerElement) spinnerElement.style.display = "none";
+        setTimeout(() => {
+            if ($382e02c9bbd5d50b$var$programButton) $382e02c9bbd5d50b$var$programButton.style.display = "initial";
+        }, 2000);
         return;
     }
-    // Hide error message
-    $382e02c9bbd5d50b$var$alertDiv.style.display = "none";
     // Show spinner and set initial status
-    if ($382e02c9bbd5d50b$var$spinnerContainer) $382e02c9bbd5d50b$var$spinnerContainer.style.display = "block";
+    if ($382e02c9bbd5d50b$var$spinnerContainer) {
+        $382e02c9bbd5d50b$var$spinnerContainer.style.display = "flex";
+        const spinnerElement = $382e02c9bbd5d50b$var$spinnerContainer.querySelector('.spinner');
+        if (spinnerElement) spinnerElement.style.display = "block"; // Make spinner visible again
+    }
     if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = "Preparing...";
     const fileArray = [];
     const progressBars = [];
@@ -7945,9 +7979,14 @@ $382e02c9bbd5d50b$var$programButton.onclick = async ()=>{
     if (fileArray.length === 0) {
         // This case should ideally be caught by validateProgramInputs, 
         // but as a safeguard, if no files are to be flashed, just return.
-        alertMsg.innerHTML = "<strong>No files to program.</strong>";
-        $382e02c9bbd5d50b$var$alertDiv.style.display = "block";
-        return; 
+        if ($382e02c9bbd5d50b$var$spinnerContainer) $382e02c9bbd5d50b$var$spinnerContainer.style.display = "flex";
+        if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = "Error: No files to program.";
+        const spinnerElement = $382e02c9bbd5d50b$var$spinnerContainer ? $382e02c9bbd5d50b$var$spinnerContainer.querySelector('.spinner') : null;
+        if (spinnerElement) spinnerElement.style.display = "none";
+        setTimeout(() => {
+            if ($382e02c9bbd5d50b$var$programButton) $382e02c9bbd5d50b$var$programButton.style.display = "initial";
+        }, 2000);
+        return;
     }
 
     try {
@@ -7999,10 +8038,15 @@ $382e02c9bbd5d50b$var$programButton.onclick = async ()=>{
             if (success) {
                 if ($382e02c9bbd5d50b$var$lblStatus) $382e02c9bbd5d50b$var$lblStatus.textContent = "Programming successful!!";
 
-                setTimeout(() => { // Inner timeout to hide after "successful" message
-                    if ($382e02c9bbd5d50b$var$spinnerContainer) $382e02c9bbd5d50b$var$spinnerContainer.style.display = "none";
+                // Hide the spinner element itself, but keep the container and label visible
+                if ($382e02c9bbd5d50b$var$spinnerContainer) {
+                    const spinnerElement = $382e02c9bbd5d50b$var$spinnerContainer.querySelector('.spinner');
+                    if (spinnerElement) spinnerElement.style.display = "none";
+                }
+
+                setTimeout(() => { // Inner timeout for program button
                     if ($382e02c9bbd5d50b$var$programButton) $382e02c9bbd5d50b$var$programButton.style.display = "initial";
-                }, 2000); // Show "Programming successful!!" for 2 seconds
+                }, 2000); // Show "Programming successful!!" indefinitely, program button reappears after 2 seconds
             } else {
                 // Error occurred. The error message is already set in the catch block.
                 // Keep it visible for a bit longer, then hide.
