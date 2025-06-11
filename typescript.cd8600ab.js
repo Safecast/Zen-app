@@ -66,6 +66,38 @@ async function fetchCentralFirmwareConfig() {
 fetchCentralFirmwareConfig();
 // --- END Safecast Central Firmware Config ---
 
+// --- START Web Serial API Compatibility Check ---
+function checkWebSerialCompatibility() {
+    if (!("serial" in navigator)) {
+        const warningDiv = document.getElementById('webSerialWarning');
+        const connectBtn = document.getElementById('connectButton');
+        const firmwareUrlSection = document.getElementById('firmwareUrlSection');
+
+        if (warningDiv) {
+            warningDiv.style.display = 'block';
+        }
+        if (connectBtn) {
+            connectBtn.disabled = true;
+            // Optionally, change button text to indicate it's unsupported
+            // connectBtn.value = "Connect (Unsupported Browser)"; 
+        }
+        if (firmwareUrlSection) {
+            // Hide the firmware URL section as it's not usable
+            firmwareUrlSection.style.display = 'none';
+        }
+        // Consider hiding or disabling other UI elements that depend on Web Serial
+    }
+}
+
+// Call the function when the DOM is fully loaded or immediately if already loaded
+if (document.readyState === "loading") {
+    document.addEventListener('DOMContentLoaded', checkWebSerialCompatibility);
+} else {
+    // DOMContentLoaded has already fired
+    checkWebSerialCompatibility();
+}
+// --- END Web Serial API Compatibility Check ---
+
 var parcelRegister = parcelRequire.register;
 parcelRegister("bLj8J", function(module, exports) {
 module.exports = import("17fYX").then(()=>parcelRequire('iwKFf'));

@@ -54,6 +54,9 @@
                     <option value="115200">115200</option>
                 </select>
 
+                <div id="webSerialWarning" class="alert alert-warning" role="alert" style="display: none; margin-top: 10px;">
+                    <strong>Warning:</strong> Your browser does not support the Web Serial API, which is required by this page to connect to devices. Please try using a recent version of Chrome, Edge, or Opera.
+                </div>
                 <input class="btn btn-primary btn-sm" type="button" id="connectButton" value="Connect">
                 <input class="btn btn-info btn-sm" type="button" id="copyTraceButton" value="Copy Trace" style="display: none;">
                 <input class="btn btn-warning btn-sm" type="button" id="disconnectButton" value="Disconnect" style="display: none;">
