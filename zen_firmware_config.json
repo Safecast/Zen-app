@@ -1,6 +1,0 @@
-{
-  "zenAppFirmwareUrlCore2": "",
-  "zenAppFirmwareUrlCoreS3": "https://raw.githubusercontent.com/Safecast/bGeigieZen/development/hardware/esp32fw_coreS3_328.bin",
-  "zenAppFirmwareUrlCore2Beta": "https://raw.githubusercontent.com/Safecast/bGeigieZen/Battery-logging-working/hardware/esp32fw_core2_331beta.bin",
-  "zenAppFirmwareUrlCoreS3Beta": "https://raw.githubusercontent.com/Safecast/bGeigieZen/Battery-logging-working/hardware/esp32fw_core2_331beta.bin"
-}
