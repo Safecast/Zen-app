@@ -39,6 +39,33 @@ if (parcelRequire == null) {
   $parcel$global["parcelRequire477f"] = parcelRequire;
 }
 
+// --- START Safecast Central Firmware Config ---
+let centralFirmwareConfig = {};
+const centralConfigUrl = './firmware_urls.json'; // Path to the central config file
+
+async function fetchCentralFirmwareConfig() {
+    try {
+        const response = await fetch(centralConfigUrl);
+        if (response.ok) {
+            centralFirmwareConfig = await response.json();
+            console.log('Successfully fetched central firmware config:', centralFirmwareConfig);
+        } else {
+            console.warn(`Central firmware config file (${centralConfigUrl}) not found or not accessible. Status: ${response.status}. Using fallback methods.`);
+            centralFirmwareConfig = {}; // Ensure it's an empty object on failure to avoid errors
+        }
+    } catch (error) {
+        console.error('Error fetching central firmware config:', error);
+        centralFirmwareConfig = {}; // Ensure it's an empty object on error
+    }
+}
+// Fetch the central config when the script loads
+// We need to ensure this runs after the DOM is ready for other parts of the script, 
+// but the fetch itself can be initiated early.
+// For simplicity in this generated file, we'll call it directly.
+// Consider DOMContentLoaded if issues arise with timing against other initializations.
+fetchCentralFirmwareConfig();
+// --- END Safecast Central Firmware Config ---
+
 var parcelRegister = parcelRequire.register;
 parcelRegister("bLj8J", function(module, exports) {
 module.exports = import("17fYX").then(()=>parcelRequire('iwKFf'));
@@ -7763,21 +7790,27 @@ function $382e02c9bbd5d50b$var$updateFirmwareUrlInput() {
     const customCore2BetaUrl = localStorage.getItem('zenAppFirmwareUrlCore2Beta');
     const customCoreS3BetaUrl = localStorage.getItem('zenAppFirmwareUrlCoreS3Beta');
 
+    // Keys for central config (stable URLs)
+    const centralConfigKeyCore2 = 'zenAppFirmwareUrlCore2';
+    const centralConfigKeyCoreS3 = 'zenAppFirmwareUrlCoreS3';
+
     if (chipName === "ESP32") {
         if ($382e02c9bbd5d50b$var$currentFirmwareType === "beta" && customCore2BetaUrl && customCore2BetaUrl.trim() !== '') {
-            urlToSet = customCore2BetaUrl;
-        } else if (customCore2StableUrl && customCore2StableUrl.trim() !== '') {
-            urlToSet = customCore2StableUrl;
+            urlToSet = customCore2BetaUrl; // Beta from localStorage takes precedence if selected
         } else {
-            urlToSet = defaultCore2Url;
+            // Priority: Central Config (Stable) -> localStorage (Stable) -> Hardcoded Default (Stable)
+            urlToSet = (centralFirmwareConfig && centralFirmwareConfig[centralConfigKeyCore2] && centralFirmwareConfig[centralConfigKeyCore2].trim() !== '')
+                        ? centralFirmwareConfig[centralConfigKeyCore2]
+                        : (customCore2StableUrl && customCore2StableUrl.trim() !== '' ? customCore2StableUrl : defaultCore2Url);
         }
     } else if (chipName === "ESP32-S3") {
         if ($382e02c9bbd5d50b$var$currentFirmwareType === "beta" && customCoreS3BetaUrl && customCoreS3BetaUrl.trim() !== '') {
-            urlToSet = customCoreS3BetaUrl;
-        } else if (customCoreS3StableUrl && customCoreS3StableUrl.trim() !== '') {
-            urlToSet = customCoreS3StableUrl;
+            urlToSet = customCoreS3BetaUrl; // Beta from localStorage takes precedence if selected
         } else {
-            urlToSet = defaultCoreS3Url;
+            // Priority: Central Config (Stable) -> localStorage (Stable) -> Hardcoded Default (Stable)
+            urlToSet = (centralFirmwareConfig && centralFirmwareConfig[centralConfigKeyCoreS3] && centralFirmwareConfig[centralConfigKeyCoreS3].trim() !== '')
+                        ? centralFirmwareConfig[centralConfigKeyCoreS3]
+                        : (customCoreS3StableUrl && customCoreS3StableUrl.trim() !== '' ? customCoreS3StableUrl : defaultCoreS3Url);
         }
     } else {
         urlToSet = ""; // Clear for other/unknown chip types
@@ -8044,11 +8077,7 @@ $382e02c9bbd5d50b$var$programButton.onclick = async ()=>{
     // Clear previous error/success messages from lblStatus if any
     if ($382e02c9bbd5d50b$var$lblStatus && ($382e02c9bbd5d50b$var$lblStatus.textContent.startsWith("Error:") || $382e02c9bbd5d50b$var$lblStatus.textContent === "Programming successful!!")) {
         $382e02c9bbd5d50b$var$lblStatus.textContent = "";
-        if ($382e02c9bbd5d50b$var$spinnerContainer) {
-            $382e02c9bbd5d50b$var$spinnerContainer.style.display = "none"; // Hide container
-            const spinnerElement = $382e02c9bbd5d50b$var$spinnerContainer.querySelector('.spinner');
-            if (spinnerElement) spinnerElement.style.display = "block"; // Reset spinner to be visible when container is next shown for programming
-        }
+        if ($382e02c9bbd5d50b$var$spinnerContainer) $382e02c9bbd5d50b$var$spinnerContainer.style.display = "none";
     }
     let success = false;
     if ($382e02c9bbd5d50b$var$programButton) $382e02c9bbd5d50b$var$programButton.style.display = "none";
